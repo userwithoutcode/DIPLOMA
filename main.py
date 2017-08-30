@@ -92,6 +92,6 @@ if __name__ == '__main__':
           )
     write_json(group_info(params, personal_group))
     print('-------------------------')
-    print('Список групп находиться в файле groups.json')
+    print('Список групп расположен в файле groups.json')
     print('-------------------------')
     print('Конец работы скрипта', ctime())
