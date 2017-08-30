@@ -6,22 +6,22 @@ import requests
 from settings import params, user_id_glob
 
 
-def friends_list(params, user_id):
+def friends_list(params, user_id_glob):
     """
     Получаем список id друзей пользователя
     """
-    params['user_id'] = user_id
+    params['user_id'] = user_id_glob
     response = requests.get('https://api.vk.com/method/friends.get', params)
     return (response.json())['response']['items']
 
 
-def user_groups(params, user_id):
+def user_groups(params, user_id_glob):
     """
     Получаем группы пользователя
     """
     params['count'] = '1000'
     params['extended'] = '0'
-    params['user_id'] = user_id
+    params['user_id'] = user_id_glob
     response = requests.get('https://api.vk.com/method/groups.get', params)
     return response.json()
 
