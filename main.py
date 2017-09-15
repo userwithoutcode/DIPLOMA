@@ -2,10 +2,12 @@ import json
 from time import sleep, ctime
 import requests
 
-
-TOKEN = ''
+# TOKEN = '82b86940ba29f3dc49b9f473fa2366b3ba8b2ea2894f8ece430fa5f5746806b3bf6c62560c9b46429024'
+TOKEN = '5dfd6b0dee902310df772082421968f4c06443abecbc082a8440cb18910a56daca73ac8d04b25154a1128'
 VERSION = '5.68'
-good_error = frozenset([18, 113])
+good_error = frozenset([7, 18, 113])
+
+
 # # user_id_glob = 5030613  # id, указанный в задании
 # user_id_glob = 87074577  # id, мой id
 # # user_id_glob = 47936997
@@ -41,6 +43,7 @@ def get_get(method, **kwargs):
     Принимает url для get Запроса и параметры, формирует запрос
     и возврашает ответ, а дальше уже его другие функции разбирают
     """
+    good_answer = 'None'
     params = {'access_token': TOKEN, 'v': VERSION}
     for key, value in kwargs.items():
         params[key] = value
@@ -55,7 +58,6 @@ def get_get(method, **kwargs):
                   .format(response.json()['error']['error_code'],
                           response.json()['error']['error_msg']))
             exit()
-
     return good_answer
 
 
@@ -77,17 +79,18 @@ def user_groups(user_id):
     return response.json()
 
 
-def personal_group(friends, user_id):
+def personal_group(friends_list, user_id_glob):
     """
     Получаем группы пользователя,
     получаем группы друзей,
     получаем уникальные группы, которые есть
     у пользователя, но нет у его друзей
     """
-    user_groups_set = set(user_groups(user_id)['response']['items'])  # список групп пользователя
+    friends_groups_set = 'None'
+    user_groups_set = set(user_groups(user_id_glob)['response']['items'])  # список групп пользователя
     i = 0
-    friends_groups_set = None
-    for user in friends:
+    for user in friends_list:
+        sleep(0.35)
         i += 1
         x = user_groups(user)  # список групп друга
         if x.get('error', 'active') == 'active':  # делаем проверку на error
@@ -124,7 +127,7 @@ def write_json(data):
     Записываем список в json
     """
     with open('groups.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=1, ensure_ascii=0)
+        json.dump(data, f, indent=1, ensure_ascii=False)
 
 
 if __name__ == '__main__':
@@ -136,14 +139,15 @@ if __name__ == '__main__':
     print('Список друзей и групп пользователя сформирован', ctime())
     print('Друзей {}\nГрупп {}'.format(len(friends_list), len(user_group)))
     print('-------------------------')
-    print('Процесс проверки друзей')
+    print('Процесс проверки друзей', '\n')
     sleep(1)
     personal_group = (personal_group(friends_list, user_id_glob))
     print('-------------------------')
     sleep(1)
     print('У данного пользователя {} уникальных групп из {}'
-          .format(len(personal_group), len(user_groups(user_id_glob)['response']['items']))
+          .format(len(personal_group), len(user_group))
           )
+    sleep(1)
     write_json(group_info(personal_group))
     print('-------------------------')
     print('Список групп расположен в файле groups.json')
