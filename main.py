@@ -51,7 +51,7 @@ def get_get(method, **kwargs):
         if response.json()['error']['error_code'] in good_error:
             good_answer = response
         else:
-            print('Возникла ошибка: {}\nОни говорят: {}'
+            print('Возникла ошибка: {}\nОписание: {}'
                   .format(response.json()['error']['error_code'],
                           response.json()['error']['error_msg']))
             exit()
