@@ -7,12 +7,6 @@ VERSION = '5.68'
 good_error = frozenset([7, 18, 113])
 
 
-# # user_id_glob = 5030613  # id, указанный в задании
-# user_id_glob = 87074577  # id, мой id
-# # user_id_glob = 47936997
-# params = {'access_token': token, 'v': version}
-
-
 def check_input_ids():
     """
     Получает айди или идентификатор неважно отправляет get запрос на vk
@@ -26,7 +20,8 @@ def check_input_ids():
                   }
         response = requests.get('https://api.vk.com/method/users.get', params)
         if response.json().get('error', 'active') == 'active':
-            if response.json()['response'][0].get('deactivated', 'yes') == 'yes':
+            if response.json()['response'][0].get('deactivated',
+                                                  'yes') == 'yes':
                 valid_id = response.json()['response'][0]['id']
             else:
                 print('Пользователь с таким id деактивирован\n')
@@ -46,7 +41,8 @@ def get_get(method, **kwargs):
     params = {'access_token': TOKEN, 'v': VERSION}
     for key, value in kwargs.items():
         params[key] = value
-    response = requests.get('https://api.vk.com/method/{}'.format(method), params)
+    response = requests.get(
+        "https://api.vk.com/method/{}".format(method), params)
     if (response.json()).get('response'):
         good_answer = response
     else:
@@ -74,7 +70,11 @@ def user_groups(user_id):
     Вызываем get_json скармливаем ей url и параметры передаваемые в запросе.
     Формирует список групп.
     """
-    response = get_get('groups.get', count='1000', extended='0', user_id=user_id)
+    response = get_get('groups.get',
+                       count='1000',
+                       extended='0',
+                       user_id=user_id
+                       )
     return response.json()
 
 
@@ -86,18 +86,18 @@ def personal_group(friends_list, user_id_glob):
     у пользователя, но нет у его друзей
     """
     friends_groups_set = 'None'
-    user_groups_set = set(user_groups(user_id_glob)['response']['items'])  # список групп пользователя
+    user_groups_set = set(user_groups(user_id_glob)['response']['items'])
     i = 0
     for user in friends_list:
         sleep(0.35)
         i += 1
         x = user_groups(user)  # список групп друга
         if x.get('error', 'active') == 'active':  # делаем проверку на error
-            friends_groups_set = set(x['response']['items'])  # преобразуем в множество
-        # находим уникальные группы из 2-х множеств которые принадлежат только 1
+            friends_groups_set = set(x['response']['items'])
         user_groups_set = user_groups_set - friends_groups_set
         # печать процесса
-        print('\rПроверенно друзей {} из {}'.format(i, len(friends_list)), end='', flush=True)
+        print('\rПроверенно друзей {} из {}'.format(i, len(friends_list)),
+              end='', flush=True)
         sleep(1)
 
     return user_groups_set
@@ -116,7 +116,9 @@ def group_info(group_ids):
     info_groups_list = []
     for group in (response.json())['response']:
         if group.get('deactivated', 'active') == 'active':
-            group_dict = {'name': group['name'], 'gid': group['id'], 'members_count': group['members_count']}
+            group_dict = {'name': group['name'],
+                          'gid': group['id'],
+                          'members_count': group['members_count']}
             info_groups_list.append(group_dict)
     return info_groups_list
 
